@@ -1,0 +1,47 @@
+{
+    "now_mode": "dark",
+    "mods": [
+        "dark",
+        "light"
+    ],
+    "mode": {
+        "dark": {
+            "text-color": "#bbb",
+            "window-color": "#333"
+        },
+        "light": {
+            "text-color": "#111111",
+            "window-color": "#AAAAAA"
+        },
+        "lagoon": {
+            "text-color": "#66CDAA",
+            "window-color": "#3d6566"
+        }
+    },
+    "font": {
+        "h1": [
+            "calibry",
+            20,
+            "bold"
+        ],
+        "h2": [
+            "calibry",
+            16,
+            "bold"
+        ],
+        "h3": [
+            "calibry",
+            14,
+            "bold"
+        ],
+        "h4": [
+            "calibry",
+            12,
+            "bold"
+        ],
+        "p": [
+            "calibry",
+            12
+        ]
+    }
+}
