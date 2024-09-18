@@ -1,0 +1,39 @@
+{
+    "language" : "en",
+    "language_list": ["ru", "en"],
+    "ru": {
+        "height:" : "  Рост:",
+        "weight:" : "  Вес:",
+        "age:" : "Возраст:",
+        "sex:" : "Пол:",
+        "calculate" : "Расчитать",
+
+        "change theme:" : "Изменить тему: ",
+        "light" : "Светлая",
+        "dark" :  "Темная",
+        "lagoon" :"Лагуна",
+        "change language" : "Изменить язык",
+
+
+        "Мужчина": "man",
+        "Женщина": "woman"
+    },
+
+    "en": {
+        "height:" : "Height:",
+        "weight:" : "Weight:",
+        "age:" : "   Age:",
+        "sex:" : "   Sex:",
+        "calculate" : "Calculate",
+
+        "change theme:" : "Change theme: ",
+        "light" : "Light",
+        "dark" :  "Dark",
+        "lagoon" :"Lagoon",
+        "change language" : "Change language",
+
+
+        "Man": "man",
+        "Woman": "woman"
+    }
+}
