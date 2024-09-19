@@ -165,7 +165,7 @@ class SettingsTab():
         self.language_combobox.place(x=160, y=350)
 
 ##
-
+#######
 class MainApp():
     def __init__(self):
         self.window = Tk()
