@@ -29,19 +29,23 @@ class Human:
             raise ValueError("Error in class human with 'sex'")
 
         self.bmr = self.__calculate_bmr()
+        self.bmi = self.__calculate_bmi()
 
     def __calculate_bmr(self):
         if self.sex == "man":
-            bmr = (88.36 + (13.4 * self.weight) + (4.8 * self.height) - (5.7 * self.age))/100
+            bmr = 88.36 + (13.4 * self.weight) + (4.8 * self.height) - (5.7 * self.age)
         else:
-            bmr = (447.6 + (9.2 * self.weight) + (3.1 * self.height) - (4.3 * self.age))/100
-        return bmr
+            bmr = 447.6 + (9.2 * self.weight) + (3.1 * self.height) - (4.3 * self.age)
+        return round(bmr, 2)
+
+    def __calculate_bmi(self):
+        return round(self.weight / ((self.height/100)**2), 2)
 
     def __str__(self):
-        return f"sex: {self.sex}, height: {self.height}, weight: {self.weight}, age: {self.age},     BMR: {self.bmr}"
+        return f"sex: {self.sex}, height: {self.height}, weight: {self.weight}, age: {self.age}, BMI:{self.bmi}, BMR: {self.bmr}"
 
     def get_data(self):
-        return (self.sex, self.height, self.weight, self.age, self.bmr)
+        return (self.sex, self.height, self.weight, self.age, self.bmi, self.bmr)
 
 
 def layout(height_entry: Entry, weight_entry: Entry, label: Label, comment_label: Label) -> float:

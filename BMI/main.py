@@ -8,22 +8,29 @@ from PIL import Image, ImageTk
 from modules.calculation import Human
 from modules.themes import get_themes_settings, change_themes
 
-with open("data/language_pack.json", "r", encoding="utf-8") as jsfile:
-    language_pack = load(jsfile)
-    text = language_pack[language_pack["language"]]
+def get_language_pack():
+    global language_pack
+    global text
+    with open("data/language_pack.json", "r", encoding="utf-8") as jsfile:
+        language_pack = load(jsfile)
+        text = language_pack[language_pack["language"]]
+
+get_language_pack()
 
 def save_language_pack(lang_pack):
     with open("data/language_pack.json", "w", encoding="utf-8") as jsfile:
         dump(lang_pack, jsfile, indent=4)
 
-def change_bmr_label(height: str, weight: str, age: str, sex: str, summ_label: Label, summ_comment_label: Label) -> None:
-    sex_dir= {
-        "Женщина": "woman",
-        "Мужчина": "man"
-    }
-    sex = sex_dir[sex]
+def change_bmr_label(height: str, weight: str, age: str, sex: str, bmr_label: Label, bmi_label:Label, bmi_comment_label: Label) -> None:
+    sex = text[sex]
     human = Human(height, weight, age, sex)
-    print(human.bmr)
+    bmr_label.config(text=f"BMR: {human.bmr}")
+    bmi_label.config(text=f"BMI: {human.bmi}")
+    for i in text['bmi_comment']:
+        if human.bmi <= i[0]:
+            bmi_comment_label.config(text=i[1])
+            break
+
 
 class MainTab():
     def __init__(self, tab: Tk, font: dict) -> None:
@@ -59,10 +66,11 @@ class MainTab():
 
         self.label_arr.append(Label(self.tab, text=text["sex:"], font=self.font["p"]))
         self.label_place_arr.append([260, 200])
-        self.sex_combobox = ttk.Combobox(self.tab, values=["Мужчина", "Женщина"], state="readonly", width=5)
+        self.sex_combobox = ttk.Combobox(self.tab, values=[text["man"], text["woman"]], state="readonly", width=5)
 
-        self.summ_label = Label(self.tab, font=self.font["h3"])
-        self.summ_comment_label = Label(self.tab, font=self.font["h4"])
+        self.bmr_label = Label(self.tab, font=self.font["h3"])
+        self.bmi_label = Label(self.tab, font=self.font["h3"])
+        self.bmi_comment_label = Label(self.tab, font=self.font["h4"])
 
         self.error_label = Label(self.tab)
 
@@ -76,7 +84,7 @@ class MainTab():
             command=lambda: change_bmr_label(
                 self.height_entry.get(), self.weight_entry.get(),
                 self.age_entry.get(), self.sex_combobox.get(),
-                self.summ_label, self.summ_comment_label
+                self.bmr_label, self.bmi_label, self.bmi_comment_label
             )
         )
 
@@ -88,17 +96,22 @@ class MainTab():
         self.age_entry.place(x=340, y=130)
         self.weight_entry.place(x=170, y=200)
         self.sex_combobox.place(x=320,y=200)
-        self.summ_label.place(x=190, y=250)
-        self.summ_comment_label.place(x=110, y=300)
-        self.error_label.place(x=150, y=400)
+
+        self.bmr_label.place(x=190, y=243)
+        self.bmi_label.place(x=190, y=283)
+        self.bmi_comment_label.place(x=150, y=310)
+
         self.calculate_button.place(x=190, y=360)
+        self.error_label.place(x=150, y=400)
+
 
 
 class SettingsTab():
-    def __init__(self, tab: Tk, font: dict) -> None:
+    def __init__(self, tab: Tk, font: dict, main_app) -> None:
         """
         Initialization settings frame
         """
+        self.main_app = main_app
         self.tab = tab
         self.font = font
 
@@ -148,12 +161,14 @@ class SettingsTab():
 
         self.language_combobox = ttk.Combobox(self.tab, values=language_pack["language_list"], state="readonly", width=10)
         self.language_combobox.set(language_pack["language"])
-        self.language_combobox.bind("<<ComboboxSelected>>", self.chenge_language())
+        self.language_combobox.bind("<<ComboboxSelected>>", self.chenge_language)
 
 
-    def chenge_language(self):
+    def chenge_language(self, event=None):
         lang = self.language_combobox.get()
         language_pack["language"] = lang
+        save_language_pack(language_pack)
+        self.main_app.reboot()
 
     def show_items(self):
         for i, item in enumerate(self.label_arr):
@@ -173,8 +188,8 @@ class MainApp():
         self.window.resizable(False, False)
         self.window.title("BMI")
 
-        themes_settings = get_themes_settings()
-        self.font = themes_settings['font']
+        self.themes_settings = get_themes_settings()
+        self.font = self.themes_settings['font']
 
 
         calculator_img = Image.open("image/calculator.png").convert("RGBA")
@@ -196,13 +211,13 @@ class MainApp():
             False: image_calculator
         }
         self.main_tab = MainTab(self.window, self.font)
-        self.setting_tab = SettingsTab(self.window, self.font)
+        self.setting_tab = SettingsTab(self.window, self.font, self)
 
         self.main_tab.show_items()
         self.create_main_app()
         self.show_main_app()
 
-        change_themes(themes_settings['now_mode'], self.window)
+        change_themes(self.themes_settings['now_mode'], self.window)
 
     def create_main_app(self):
         self.button_change_app = Button(
@@ -211,16 +226,32 @@ class MainApp():
             command= self.change_app
         )
 
+    def update_themes_settings(self):
+        self.themes_settings = get_themes_settings()
+
+    def reboot(self):
+        self.hide_widgets()
+        del self.main_tab
+        del self.setting_tab
+        get_language_pack()
+        self.main_tab = MainTab(self.window, self.font)
+        self.setting_tab = SettingsTab(self.window, self.font, self)
+        self.setting_tab.show_items()
+        self.show_main_app()
+        self.update_themes_settings()
+        change_themes(self.themes_settings['now_mode'], self.window)
+
     def show_main_app(self):
         self.button_change_app.place(x=430, y=30)
 
     def loop(self):
         self.window.mainloop()
 
+
     def hide_widgets(self):
         # Скрываем все виджеты в окне
         for widget in self.window.winfo_children():
-            widget.place_forget()  # Если используете grid, применяйте grid_forget()
+            widget.place_forget()
 
     def change_app(self):
         self.hide_widgets()
