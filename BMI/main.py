@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter.messagebox import showinfo
 
+from sys import exit
 import sqlite3
 from json import load, dump
 from PIL import Image, ImageTk
@@ -179,9 +181,60 @@ class SettingsTab():
 
         self.language_combobox.place(x=160, y=350)
 
-##
+
+class TitleTab:
+    def __init__(self, tab: Tk, font: dict, main_app):
+        self.tab = tab
+        self.font = font
+
+        self.main_app = main_app
+
+        self.__create_item()
+
+    def __create_item(self):
+        self.calculator_tab_button = Button(          #Кнопка перехрода в калькулятор
+            self.tab,
+            width=20,
+            height=2,
+            text="Перейти в калькулятор",
+            command=lambda: main_app.choese_tab("main")
+        )
+
+        self.settings_tab_button = Button(  # Кнопка перехрода в меню
+            self.tab,
+            width=20,
+            height=2,
+            text="Перейти в настройки",
+            command=lambda: main_app.choese_tab("settings")
+        )
+
+        self.about_me_button = Button(          #Кнопка вывода информации обо мне
+            self.tab,
+            width=20,
+            height=2,
+            text="об авторе",
+            command=lambda: showinfo("Об авторе", "Я ДУРАК")
+        )
+
+        self.exit_button = Button(              # Кнопка выхода
+            self.tab,
+            width=20,
+            height=2,
+            text="Выйти",
+            command=exit
+        )
+
+    def show_items(self):
+        self.calculator_tab_button.place(x=170,y=150)
+        self.settings_tab_button.place(x=170,y=250)
+        self.about_me_button.place(x=170,y=350)
+        self.exit_button.place(x=170,y=450)
+
+
+
+
 #######
-class MainApp():
+class MainApp:
     def __init__(self):
         self.window = Tk()
         self.window.geometry("500x700")
@@ -210,12 +263,16 @@ class MainApp():
             True: image_settings,
             False: image_calculator
         }
+
         self.main_tab = MainTab(self.window, self.font)
         self.setting_tab = SettingsTab(self.window, self.font, self)
+        self.title_tab = TitleTab(self.window, self.font, self)
 
-        self.main_tab.show_items()
+        #self.main_tab.show_items()
+        self.title_tab.show_items()
         self.create_main_app()
-        self.show_main_app()
+
+
 
         change_themes(self.themes_settings['now_mode'], self.window)
 
@@ -223,7 +280,15 @@ class MainApp():
         self.button_change_app = Button(
             self.window,
             image=self.bool_dict_image[True],
-            command= self.change_app
+            command=self.change_app
+        )
+
+        self.title_button = Button(
+            self.window,
+            height=1,
+            width=6,
+            text="меню",
+            command=self.open_title
         )
 
     def update_themes_settings(self):
@@ -233,9 +298,12 @@ class MainApp():
         self.hide_widgets()
         del self.main_tab
         del self.setting_tab
+
         get_language_pack()
         self.main_tab = MainTab(self.window, self.font)
         self.setting_tab = SettingsTab(self.window, self.font, self)
+        self.title_tab = TitleTab(self.window, self.font, self)
+
         self.setting_tab.show_items()
         self.show_main_app()
         self.update_themes_settings()
@@ -243,6 +311,7 @@ class MainApp():
 
     def show_main_app(self):
         self.button_change_app.place(x=430, y=30)
+        self.title_button.place(x=30,y=32)
 
     def loop(self):
         self.window.mainloop()
@@ -265,6 +334,24 @@ class MainApp():
             self.bool_check_app = True
             self.button_change_app.config(image=self.bool_dict_image[self.bool_check_app])
 
+    def choese_tab(self, tab_name: str) -> None:
+        self.hide_widgets()
+        self.show_main_app()
+        self.show_main_app()
+        if tab_name == "main":
+            self.main_tab.show_items()
+            self.bool_check_app = True
+            self.button_change_app.config(image=self.bool_dict_image[self.bool_check_app])
+        elif tab_name == "settings":
+            self.setting_tab.show_items()
+            self.bool_check_app = False
+            self.button_change_app.config(image=self.bool_dict_image[self.bool_check_app])
+        else:
+            raise NameError
+
+    def open_title(self):
+        self.hide_widgets()
+        self.title_tab.show_items()
 
 main_app = MainApp()
 main_app.loop()
