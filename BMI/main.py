@@ -10,6 +10,7 @@ from PIL import Image, ImageTk
 
 from modules.calculation import Human
 from modules.themes import get_themes_settings, change_themes
+from modules.db_control import DBManager
 
 def get_language_pack():
     global language_pack
@@ -20,11 +21,15 @@ def get_language_pack():
 
 get_language_pack()
 
+db_manager = DBManager("data/base.db", text)
+
+
 def save_language_pack(lang_pack):
     with open("data/language_pack.json", "w", encoding="utf-8") as jsfile:
         dump(lang_pack, jsfile, indent=4)
 
-def change_bmr_label(height: str, weight: str, age: str, sex: str, bmr_label: Label, bmi_label:Label, bmi_comment_label: Label, error_label: Label) -> int:
+def change_bmr_label(height: str, weight: str, age: str, sex: str, bmr_label: Label,
+                     bmi_label:Label, bmi_comment_label: Label, error_label: Label, text_box: Text):
     bmi_label.config(text="")
     bmr_label.config(text="")
     bmi_comment_label.config(text="")
@@ -45,8 +50,21 @@ def change_bmr_label(height: str, weight: str, age: str, sex: str, bmr_label: La
                 break
     except ValueError as ex:
         error_label.config(text=ex)
+        return 0
     except TypeError as ex:
         error_label.config(text=ex)
+        return 0
+    db_manager.write_data((sex, height, weight, age, human.bmi, human.bmr))
+    text_box.insert('2.0', db_manager.get_last_record())
+    #text_box.delete("2.0", "3.0")
+    """
+    first_line = text_box.get("1.0", "2.0").strip()  
+
+   
+    
+    text_box.insert("1.0", first_line + "\n")
+    
+    text_box.insert("2.0", text + "\n")"""
 
 class MainTab():
     def __init__(self, tab: Tk, font: dict) -> None:
@@ -67,20 +85,20 @@ class MainTab():
         self.label_place_arr.append([220, 30])
 
 
-        self.label_arr.append(Label(self.tab, text=text["height:"], font=self.font["p"]))
+        self.label_arr.append(Label(self.tab, text=text["height"]+":", font=self.font["p"]))
         self.label_place_arr.append([100, 130])
         self.height_entry = Entry(self.tab, width=8)
 
-        self.label_arr.append(Label(self.tab, text=text["age:"], font=self.font["p"]))
+        self.label_arr.append(Label(self.tab, text=text["age"]+":", font=self.font["p"]))
         self.label_place_arr.append([260,130])
         self.age_entry = Entry(self.tab, width=5)
 
 
-        self.label_arr.append(Label(self.tab, text=text["weight:"], font=self.font["p"]))
+        self.label_arr.append(Label(self.tab, text=text["weight"]+":", font=self.font["p"]))
         self.label_place_arr.append([100, 200])
         self.weight_entry = Entry(self.tab, width=8)
 
-        self.label_arr.append(Label(self.tab, text=text["sex:"], font=self.font["p"]))
+        self.label_arr.append(Label(self.tab, text=text["sex"]+":", font=self.font["p"]))
         self.label_place_arr.append([260, 200])
         self.sex_combobox = ttk.Combobox(self.tab, values=[text["man"], text["woman"]], state="readonly", width=7)
 
@@ -89,7 +107,6 @@ class MainTab():
         self.bmi_comment_label = Label(self.tab, font=self.font["h4"])
 
         self.error_label = Label(self.tab, font=self.font["h3"])
-
 
         self.calculate_button = Button(
             self.tab,
@@ -100,9 +117,32 @@ class MainTab():
             command=lambda: change_bmr_label(
                 self.height_entry.get(), self.weight_entry.get(),
                 self.age_entry.get(), self.sex_combobox.get(),
-                self.bmr_label, self.bmi_label, self.bmi_comment_label, self.error_label
+                self.bmr_label, self.bmi_label, self.bmi_comment_label, self.error_label, self.text_box
             )
         )
+
+
+        self.label_arr.append(Label(self.tab, text=text["History"] + ":", font=self.font["h3"]))
+        self.label_place_arr.append([18, 400])
+
+        self.scrollbar = Scrollbar(self.tab, width=18, orient=VERTICAL)
+        self.text_box = Text(self.tab, font=self.font["h4"], width=46, height=14, yscrollcommand=self.scrollbar.set)
+
+        self.clear_text_box_button = Button(
+            self.tab,
+            height=1,
+            width=8,
+            background="#98FB98",
+            text=text["Clear"],
+            command=self.clear_text_box_button
+        )
+
+        self.scrollbar.config(command=self.text_box.yview)
+
+
+
+        self.text_box.insert('1.0', str(db_manager))
+
 
     def show_items(self):
         for i, item in enumerate(self.label_arr):
@@ -118,9 +158,16 @@ class MainTab():
         self.bmi_comment_label.place(x=150, y=310)
 
         self.error_label.place(x=140, y=265)
-        self.calculate_button.place(x=190, y=380)
+        self.calculate_button.place(x=210, y=380)
 
+        #self.scrollbar.place(x=483, y=440.1)
+        self.clear_text_box_button.place(x=400, y=400)
+        self.text_box.place(x=18, y=435)
 
+    def clear_text_box_button(self):
+        self.text_box.delete("1.0", END)
+        db_manager.delete_data()
+        self.text_box.insert('1.0', str(db_manager))
 
 
 class SettingsTab():
@@ -315,9 +362,12 @@ class MainApp:
         del self.setting_tab
 
         get_language_pack()
+        db_manager.set_language_pack(text)
         self.main_tab = MainTab(self.window, self.font)
         self.setting_tab = SettingsTab(self.window, self.font, self)
         self.title_tab = TitleTab(self.window, self.font, self)
+
+
 
         self.setting_tab.show_items()
         self.show_main_app()
@@ -328,8 +378,6 @@ class MainApp:
         self.button_change_app.place(x=430, y=30)
         self.title_button.place(x=30,y=32)
 
-    def loop(self):
-        self.window.mainloop()
 
 
     def hide_widgets(self):
@@ -367,6 +415,9 @@ class MainApp:
     def open_title(self):
         self.hide_widgets()
         self.title_tab.show_items()
+
+    def loop(self):
+        self.window.mainloop()
 
 main_app = MainApp()
 main_app.loop()

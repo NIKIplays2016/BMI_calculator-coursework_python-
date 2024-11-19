@@ -1,5 +1,5 @@
 {
-    "now_mode": "dark",
+    "now_mode": "lagoon",
     "mods": [
         "dark",
         "light"
@@ -35,7 +35,7 @@
             "bold"
         ],
         "h4": [
-            "calibry",
+            "Courier",
             12,
             "bold"
         ],
