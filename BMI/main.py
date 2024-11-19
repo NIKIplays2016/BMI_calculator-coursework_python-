@@ -5,6 +5,7 @@ from tkinter.messagebox import showinfo
 from sys import exit
 import sqlite3
 from json import load, dump
+import os
 from PIL import Image, ImageTk
 
 from modules.calculation import Human
@@ -23,16 +24,29 @@ def save_language_pack(lang_pack):
     with open("data/language_pack.json", "w", encoding="utf-8") as jsfile:
         dump(lang_pack, jsfile, indent=4)
 
-def change_bmr_label(height: str, weight: str, age: str, sex: str, bmr_label: Label, bmi_label:Label, bmi_comment_label: Label) -> None:
-    sex = text[sex]
-    human = Human(height, weight, age, sex)
-    bmr_label.config(text=f"BMR: {human.bmr}")
-    bmi_label.config(text=f"BMI: {human.bmi}")
-    for i in text['bmi_comment']:
-        if human.bmi <= i[0]:
-            bmi_comment_label.config(text=i[1])
-            break
+def change_bmr_label(height: str, weight: str, age: str, sex: str, bmr_label: Label, bmi_label:Label, bmi_comment_label: Label, error_label: Label) -> int:
+    bmi_label.config(text="")
+    bmr_label.config(text="")
+    bmi_comment_label.config(text="")
+    error_label.config(text="")
+    try:
+        sex = text[sex]
+    except KeyError:
+        error_label.config(text="Заполните все поля")
+        return 0
 
+    try:
+        human = Human(height, weight, age, sex)
+        bmr_label.config(text=f"BMR: {human.bmr}")
+        bmi_label.config(text=f"BMI: {human.bmi}")
+        for i in text['bmi_comment']:
+            if human.bmi <= i[0]:
+                bmi_comment_label.config(text=i[1])
+                break
+    except ValueError as ex:
+        error_label.config(text=ex)
+    except TypeError as ex:
+        error_label.config(text=ex)
 
 class MainTab():
     def __init__(self, tab: Tk, font: dict) -> None:
@@ -74,7 +88,7 @@ class MainTab():
         self.bmi_label = Label(self.tab, font=self.font["h3"])
         self.bmi_comment_label = Label(self.tab, font=self.font["h4"])
 
-        self.error_label = Label(self.tab)
+        self.error_label = Label(self.tab, font=self.font["h3"])
 
 
         self.calculate_button = Button(
@@ -86,7 +100,7 @@ class MainTab():
             command=lambda: change_bmr_label(
                 self.height_entry.get(), self.weight_entry.get(),
                 self.age_entry.get(), self.sex_combobox.get(),
-                self.bmr_label, self.bmi_label, self.bmi_comment_label
+                self.bmr_label, self.bmi_label, self.bmi_comment_label, self.error_label
             )
         )
 
@@ -103,8 +117,9 @@ class MainTab():
         self.bmi_label.place(x=190, y=283)
         self.bmi_comment_label.place(x=150, y=310)
 
-        self.calculate_button.place(x=190, y=360)
-        self.error_label.place(x=150, y=400)
+        self.error_label.place(x=140, y=265)
+        self.calculate_button.place(x=190, y=380)
+
 
 
 

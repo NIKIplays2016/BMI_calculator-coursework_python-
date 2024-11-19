@@ -4,24 +4,28 @@ class Human:
     def __init__(self, height: float, weight: float, age: int, sex: str) -> None:
         try:
             self.height = float(height)
-            if self.height <= 0 :
-                raise ValueError("Рост должен быть более 0 см")
         except:
             raise TypeError("Рост должен быть числом")
+        if self.height <= 0:
+           raise ValueError("Рост должен быть более 0 см")
+
 
         try:
             self.weight = float(weight)
-            if self.weight <= 0:
-                raise ValueError("Вес должен быть более 0 кг")
+
         except:
             raise TypeError("Вес должен быть числом")
+        if self.weight <= 0:
+            raise ValueError("Вес должен быть более 0 кг")
+
 
         try:
             self.age = int(age)
-            if self.age <= 0:
-                raise ValueError("Возраст должен быть более 0 лет")
         except:
             raise TypeError("Возраст должен быть числом")
+        if self.age <= 0:
+            raise ValueError("Возраст должен быть более 0 лет")
+
 
         if sex == "man" or sex == "woman":
             self.sex = sex
