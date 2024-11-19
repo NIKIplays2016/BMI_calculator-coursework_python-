@@ -82,7 +82,7 @@ class MainTab():
 
         self.label_arr.append(Label(self.tab, text=text["sex:"], font=self.font["p"]))
         self.label_place_arr.append([260, 200])
-        self.sex_combobox = ttk.Combobox(self.tab, values=[text["man"], text["woman"]], state="readonly", width=5)
+        self.sex_combobox = ttk.Combobox(self.tab, values=[text["man"], text["woman"]], state="readonly", width=7)
 
         self.bmr_label = Label(self.tab, font=self.font["h3"])
         self.bmi_label = Label(self.tab, font=self.font["h3"])
