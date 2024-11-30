@@ -1,36 +1,36 @@
 {
-    "now_mode": "light",
+    "now_mode": "lagoon",
     "mods": [
         "dark",
         "light"
     ],
     "mode": {
         "dark": {
-            "text-color": "#bbb",
-            "window-color": "#111"
+            "text-color": "#E0E0E0",
+            "window-color": "#2E2E2E"
         },
         "light": {
-            "text-color": "#111111",
-            "window-color": "#AAAAAA"
+            "text-color": "#424953",
+            "window-color": "#e9edf3"
         },
         "lagoon": {
-            "text-color": "#66CDAA",
-            "window-color": "#3d6566"
+            "text-color": "#e6f6f6",
+            "window-color": "#39a4a1"
         }
     },
     "font": {
         "h1": [
-            "calibry",
+            "Courier",
             20,
             "bold"
         ],
         "h2": [
-            "calibry",
+            "Courier",
             16,
             "bold"
         ],
         "h3": [
-            "calibry",
+            "Courier",
             14,
             "bold"
         ],
@@ -40,8 +40,9 @@
             "bold"
         ],
         "p": [
-            "calibry",
-            12
+            "Courier",
+            13,
+            "bold"
         ]
     }
 }

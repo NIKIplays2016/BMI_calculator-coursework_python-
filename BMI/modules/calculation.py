@@ -34,6 +34,7 @@ class Human:
 
         self.bmr = self.__calculate_bmr()
         self.bmi = self.__calculate_bmi()
+        self.ideal_weight = self.__calculate_ideal_weight()
 
     def __calculate_bmr(self):
         if self.sex == "man":
@@ -45,15 +46,20 @@ class Human:
     def __calculate_bmi(self):
         return round(self.weight / ((self.height/100)**2), 2)
 
+    def __calculate_ideal_weight(self):
+        if self.sex == "man":
+            return round(0.9 * (self.height - 100) + (self.age / 10), 1)
+        else:
+            return round(0.9 * (self.height - 100) + (self.age / 10) * 0.9, 1)
+
     def __str__(self):
         return f"sex: {self.sex}, height: {self.height}, weight: {self.weight}, age: {self.age}, BMI:{self.bmi}, BMR: {self.bmr}"
 
     def get_data(self):
         return (self.sex, self.height, self.weight, self.age, self.bmi, self.bmr)
 
-
+"""
 def layout(height_entry: Entry, weight_entry: Entry, label: Label, comment_label: Label) -> float:
-    """КАКА"""
     global height
     try:
         height = float(height_entry.get())
@@ -79,12 +85,8 @@ def layout(height_entry: Entry, weight_entry: Entry, label: Label, comment_label
     comment_label.config(text="GOOD, bib bob pop lop top bop")
 
 def calculate(height: float, weight: float, age: int, sex: str) -> float:
-    """
-    take height(cm), weight(kg), age(year), sex(gender) and calculate BMI
-    height > 0, weight > 0, age > 0, sex = m OR w
-    """
-
-    """"""
+    
+    
 
     if sex == "m":
         bmr = 88.36 + (13.4 * weight) + (4.8*height) - (5.7 * age)
@@ -96,4 +98,4 @@ def calculate(height: float, weight: float, age: int, sex: str) -> float:
 
     return weight / ((height/100) ** 2)
 
-
+"""

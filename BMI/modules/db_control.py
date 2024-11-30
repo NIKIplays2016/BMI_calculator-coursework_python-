@@ -44,8 +44,8 @@ class DBManager:
     def __str__(self):
         data = self.get_data()
 
-        string = "id  " + self.text['sex'].ljust(5)[:5] + self.text['height'].ljust(7)[:7]
-        string += self.text['weight'].ljust(7)[:7] + self.text['age'].ljust(8)[:8] + "BMI".ljust(7) + "BMR" + "\n"
+        string = "id  " + self.text['sex'].ljust(6)[:6] + self.text['height'].ljust(7)[:7]
+        string += self.text['weight'].ljust(6)[:6] + self.text['age'].ljust(8)[:8] + "BMI".ljust(7) + "BMR" + "\n"
         string += "\u0305"*44 + "\n"
         self.max_index= len(data)
         for indx, row in enumerate(reversed(data)):
