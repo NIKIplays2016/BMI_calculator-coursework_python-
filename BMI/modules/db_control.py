@@ -44,18 +44,19 @@ class DBManager:
     def __str__(self):
         data = self.get_data()
 
-        string = "id  " + self.text['sex'].ljust(6)[:6] + self.text['height'].ljust(7)[:7]
-        string += self.text['weight'].ljust(7)[:7] + self.text['age'].ljust(8)[:8] + "BMI".ljust(8) + "BMR" + "\n"
-        self.max_index= len(data) + 1
+        string = "id  " + self.text['sex'].ljust(5)[:5] + self.text['height'].ljust(7)[:7]
+        string += self.text['weight'].ljust(7)[:7] + self.text['age'].ljust(8)[:8] + "BMI".ljust(7) + "BMR" + "\n"
+        string += "\u0305"*44 + "\n"
+        self.max_index= len(data)
         for indx, row in enumerate(reversed(data)):
             string += str(self.max_index - indx).ljust(4)
 
-            string += row[0].ljust(9)[:9]
+            string += row[0].ljust(7)[:7]
             string += str(row[1]).ljust(6)
             string += str(row[2]).ljust(6)
-            string += str(row[3]).ljust(6)
-            string += str(round(row[4],2)).ljust(8)
-            string += str(round(row[5],2)).ljust(6)
+            string += str(row[3]).ljust(8)
+            string += str(round(row[4],1)).ljust(7)[:7]
+            string += str(round(row[5],1)).ljust(6)[:6]
             """for i in row:
                 try:
                     string += str(round(i,2)).ljust(6)[:7]
@@ -80,12 +81,12 @@ class DBManager:
 
         string = ""
         string += str(self.max_index + 1).ljust(4)
-        string += row[0].ljust(9)[:9]
+        string += row[0].ljust(7)[:7]
         string += str(row[1]).ljust(6)
         string += str(row[2]).ljust(6)
-        string += str(row[3]).ljust(6)
-        string += str(round(row[4], 2)).ljust(8)
-        string += str(round(row[5], 2)).ljust(6)
+        string += str(row[3]).ljust(8)
+        string += str(round(row[4], 1)).ljust(7)[:7]
+        string += str(round(row[5], 1)).ljust(6)[:6]
         string += "\n"
         self.max_index += 1
         return string

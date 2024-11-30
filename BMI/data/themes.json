@@ -1,5 +1,5 @@
 {
-    "now_mode": "lagoon",
+    "now_mode": "light",
     "mods": [
         "dark",
         "light"
@@ -7,7 +7,7 @@
     "mode": {
         "dark": {
             "text-color": "#bbb",
-            "window-color": "#333"
+            "window-color": "#111"
         },
         "light": {
             "text-color": "#111111",

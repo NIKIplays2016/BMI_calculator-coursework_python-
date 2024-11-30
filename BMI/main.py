@@ -7,10 +7,18 @@ import sqlite3
 from json import load, dump
 import os
 from PIL import Image, ImageTk
+import ctypes
 
 from modules.calculation import Human
 from modules.themes import get_themes_settings, change_themes
 from modules.db_control import DBManager
+
+
+# Установка фиксированного DPI для приложения
+try:
+    ctypes.windll.shcore.SetProcessDpiAwareness(1)  # DPI_AWARENESS_CONTEXT_SYSTEM_AWARE
+except Exception:
+    pass
 
 def get_language_pack():
     global language_pack
@@ -44,10 +52,14 @@ def change_bmr_label(height: str, weight: str, age: str, sex: str, bmr_label: La
         human = Human(height, weight, age, sex)
         bmr_label.config(text=f"BMR: {human.bmr}")
         bmi_label.config(text=f"BMI: {human.bmi}")
+        check = True
         for i in text['bmi_comment']:
             if human.bmi <= i[0]:
-                bmi_comment_label.config(text=i[1])
+                bmi_comment_label.config(text=i[1].ljust(20))
+                check = False
                 break
+        if check:
+            bmi_comment_label.config(text=text['bmi_comment'][6][1])
     except ValueError as ex:
         error_label.config(text=ex)
         return 0
@@ -55,7 +67,7 @@ def change_bmr_label(height: str, weight: str, age: str, sex: str, bmr_label: La
         error_label.config(text=ex)
         return 0
     db_manager.write_data((sex, height, weight, age, human.bmi, human.bmr))
-    text_box.insert('2.0', db_manager.get_last_record())
+    text_box.insert('3.0', db_manager.get_last_record())
     #text_box.delete("2.0", "3.0")
     """
     first_line = text_box.get("1.0", "2.0").strip()  
@@ -126,8 +138,8 @@ class MainTab():
         self.label_place_arr.append([18, 400])
 
         self.scrollbar = Scrollbar(self.tab, width=18, orient=VERTICAL)
-        self.text_box = Text(self.tab, font=self.font["h4"], width=46, height=14, yscrollcommand=self.scrollbar.set)
-
+        self.text_box = Text(self.tab, font=self.font["h4"], width=44, height=12, yscrollcommand=self.scrollbar.set)
+        self.text_box.pack_propagate(False)
         self.clear_text_box_button = Button(
             self.tab,
             height=1,
@@ -158,11 +170,11 @@ class MainTab():
         self.bmi_comment_label.place(x=150, y=310)
 
         self.error_label.place(x=140, y=265)
-        self.calculate_button.place(x=210, y=380)
+        self.calculate_button.place(x=200, y=380)
 
         #self.scrollbar.place(x=483, y=440.1)
         self.clear_text_box_button.place(x=400, y=400)
-        self.text_box.place(x=18, y=435)
+        self.text_box.place(x=6, y=435)
 
     def clear_text_box_button(self):
         self.text_box.delete("1.0", END)
