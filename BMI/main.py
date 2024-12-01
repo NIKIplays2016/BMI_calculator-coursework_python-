@@ -16,6 +16,9 @@ from modules.themes import get_themes_settings, change_themes
 from modules.db_control import DBManager
 
 from my_tabs.tittle_tab import TitleTab
+from my_tabs.help_tab import HelpTab
+from my_tabs.about_tab import AboutTab
+
 
 
 # Установка фиксированного DPI для приложения
@@ -47,6 +50,7 @@ def change_bmr_label(height: str, weight: str, age: str, sex: str, bmr_label: La
     bmr_label.config(text="")
     bmi_comment_label.config(text="")
     error_label.config(text="")
+    ideal_weight_label.config(text="")
     try:
         sex = text[sex]
     except KeyError:
@@ -331,6 +335,7 @@ class MainApp:
         self.themes_settings = get_themes_settings()
         self.font = self.themes_settings['font']
 
+        self.check_tittle = True
 
         calculator_img = Image.open("image/calculator.png").convert("RGBA")
         settings_img = Image.open("image/settings.png").convert("RGBA")
@@ -353,13 +358,14 @@ class MainApp:
 
         self.main_tab = MainTab(self.window, self.font)
         self.setting_tab = SettingsTab(self.window, self.font, self)
+
         self.title_tab = TitleTab(self.window, self.font, self)
+        self.about_tab = AboutTab(self.window, self.font, text, self)
+        self.help_tab = HelpTab(self.window, self.font, text, self)
 
         #self.main_tab.show_items()
         self.title_tab.show_items()
         self.create_main_app()
-
-
 
         change_themes(self.themes_settings['now_mode'], self.window)
 
@@ -369,13 +375,32 @@ class MainApp:
             image=self.bool_dict_image[True],
             command=self.change_app
         )
-
-        self.title_button = Button(
+        self.title_button = CTkButton(
             self.window,
-            height=1,
-            width=6,
-            text="меню",
-            command=self.open_title
+            height=10,
+            width=45,
+            text=text["menu"],
+            command=self.open_title,
+            corner_radius=0,
+            font=tuple(self.font["h4"])
+        )
+        self.about_autor_button = CTkButton(
+            self.window,
+            height=10,
+            width=45,
+            text=text["about"],
+            command=self.open_about,
+            corner_radius=0,
+            font=tuple(self.font["h4"])
+        )
+        self.help_button = CTkButton(
+            self.window,
+            height=10,
+            width=45,
+            text=text["help"],
+            command=self.open_help,
+            corner_radius=0,
+            font=tuple(self.font["h4"])
         )
 
     def update_themes_settings(self):
@@ -385,14 +410,19 @@ class MainApp:
         self.hide_widgets()
         del self.main_tab
         del self.setting_tab
+        del self.about_tab
+        del self.help_tab
+
 
         get_language_pack()
         db_manager.set_language_pack(text)
         self.main_tab = MainTab(self.window, self.font)
         self.setting_tab = SettingsTab(self.window, self.font, self)
         self.title_tab = TitleTab(self.window, self.font, self)
+        self.about_tab = AboutTab(self.window, self.font, text, self)
+        self.help_tab = HelpTab(self.window, self.font, text, self)
 
-
+        self.create_main_app()
 
         self.setting_tab.show_items()
         self.show_main_app()
@@ -401,9 +431,10 @@ class MainApp:
 
     def show_main_app(self):
         self.button_change_app.place(x=430, y=30)
-        self.title_button.place(x=30,y=32)
 
-
+        self.title_button.place(x=0,y=0)
+        self.about_autor_button.place(x=47, y=0)
+        self.help_button.place(x=94, y=0)
 
     def hide_widgets(self):
         # Скрываем все виджеты в окне
@@ -426,6 +457,7 @@ class MainApp:
         self.hide_widgets()
         self.show_main_app()
         self.show_main_app()
+        self.check_tittle = False
         if tab_name == "main":
             self.main_tab.show_items()
             self.bool_check_app = True
@@ -438,8 +470,17 @@ class MainApp:
             raise NameError
 
     def open_title(self):
+        self.check_tittle = True
         self.hide_widgets()
         self.title_tab.show_items()
+
+    def open_about(self):
+        self.hide_widgets()
+        self.about_tab.show_items()
+
+    def open_help(self):
+        self.hide_widgets()
+        self.help_tab.show_items()
 
     def loop(self):
         self.window.mainloop()
