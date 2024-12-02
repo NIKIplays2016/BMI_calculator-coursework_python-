@@ -54,11 +54,11 @@ def change_bmr_label(height: str, weight: str, age: str, sex: str, bmr_label: La
     try:
         sex = text[sex]
     except KeyError:
-        error_label.config(text="Заполните все поля")
+        error_label.config(text=text["ex_empty"])
         return 0
 
     try:
-        human = Human(height, weight, age, sex)
+        human = Human(height, weight, age, sex, text)
         bmr_label.config(text=f"BMR:{human.bmr}")
         bmi_label.config(text=f"BMI:{human.bmi}")
         check = True
@@ -95,8 +95,8 @@ class MainTab():
         Initialization main frame,
         """
         self.tab = tab
-
         self.font = font
+        self.tooltip = None
 
         self.__create_item()
 
@@ -111,15 +111,21 @@ class MainTab():
         self.label_arr.append(Label(self.tab, text=(text["height"])[:6], font=self.font["p"]))
         self.label_place_arr.append([136, 100])
         self.height_entry = Entry(self.tab, width=8)
+        self.height_entry.bind("<Enter>", lambda e: self.show_tooltip(e, text["cm_help"]))
+        self.height_entry.bind("<Leave>", lambda e: self.hide_tooltip())
 
         self.label_arr.append(Label(self.tab, text=(text["age"])[:7], font=self.font["p"]))
         self.label_place_arr.append([293,100])
         self.age_entry = Entry(self.tab, width=9)
+        self.age_entry.bind("<Enter>", lambda e: self.show_tooltip(e, text["age_help"]))
+        self.age_entry.bind("<Leave>", lambda e: self.hide_tooltip())
 
 
         self.label_arr.append(Label(self.tab, text=(text["weight"])[:6], font=self.font["p"]))
         self.label_place_arr.append([136, 170])
         self.weight_entry = Entry(self.tab, width=8)
+        self.weight_entry.bind("<Enter>", lambda e: self.show_tooltip(e, text["kg_help"]))
+        self.weight_entry.bind("<Leave>", lambda e: self.hide_tooltip())
 
         self.label_arr.append(Label(self.tab, text=(text["sex"])[:6], font=self.font["p"]))
         self.label_place_arr.append([293, 170])
@@ -171,6 +177,17 @@ class MainTab():
 
         self.text_box.insert('1.0', str(db_manager))
 
+    def show_tooltip(self, event, text):
+        self.tooltip = Toplevel(self.tab)
+        self.tooltip.wm_overrideredirect(True)
+        self.tooltip.wm_geometry(f"+{event.x_root + 10}+{event.y_root + 10}")
+        label = Label(self.tooltip, text=text, relief="solid", borderwidth=1)
+        label.pack()
+
+    def hide_tooltip(self):
+        if self.tooltip:
+            self.tooltip.destroy()
+            self.tooltip = None
 
     def show_items(self):
         for i, item in enumerate(self.label_arr):
@@ -271,57 +288,6 @@ class SettingsTab():
             item.place(x=self.button_arr_place[i][0], y=self.button_arr_place[i][1])
 
         self.language_combobox.place(x=160, y=350)
-
-"""
-class TitleTab:
-    def __init__(self, tab: Tk, font: dict, main_app):
-        self.tab = tab
-        self.font = font
-
-        self.main_app = main_app
-
-        self.__create_item()
-
-    def __create_item(self):
-        self.calculator_tab_button = Button(          #Кнопка перехрода в калькулятор
-            self.tab,
-            width=20,
-            height=2,
-            text="Перейти в калькулятор",
-            command=lambda: self.main_app.choese_tab("main")
-        )
-
-        self.settings_tab_button = Button(  # Кнопка перехрода в меню
-            self.tab,
-            width=20,
-            height=2,
-            text="Перейти в настройки",
-            command=lambda: main_app.choese_tab("settings")
-        )
-
-        self.about_me_button = Button(          #Кнопка вывода информации обо мне
-            self.tab,
-            width=20,
-            height=2,
-            text="об авторе",
-            command=lambda: showinfo("Об авторе", "Я ДУРАК")
-        )
-
-        self.exit_button = Button(              # Кнопка выхода
-            self.tab,
-            width=20,
-            height=2,
-            text="Выйти",
-            command=exit
-        )
-
-    def show_items(self):
-        self.calculator_tab_button.place(x=170,y=150)
-        self.settings_tab_button.place(x=170,y=250)
-        self.about_me_button.place(x=170,y=350)
-        self.exit_button.place(x=170,y=450)
-
-"""
 
 
 #######
