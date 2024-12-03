@@ -79,15 +79,6 @@ def change_bmr_label(height: str, weight: str, age: str, sex: str, bmr_label: La
         return 0
     db_manager.write_data((sex, height, weight, age, human.bmi, human.bmr))
     text_box.insert('3.0', db_manager.get_last_record())
-    #text_box.delete("2.0", "3.0")
-    """
-    first_line = text_box.get("1.0", "2.0").strip()  
-
-   
-    
-    text_box.insert("1.0", first_line + "\n")
-    
-    text_box.insert("2.0", text + "\n")"""
 
 class MainTab():
     def __init__(self, tab: Tk, font: dict) -> None:

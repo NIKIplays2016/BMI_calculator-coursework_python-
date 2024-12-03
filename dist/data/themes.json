@@ -1,0 +1,48 @@
+{
+    "now_mode": "dark",
+    "mods": [
+        "dark",
+        "light"
+    ],
+    "mode": {
+        "dark": {
+            "text-color": "#E0E0E0",
+            "window-color": "#2E2E2E"
+        },
+        "light": {
+            "text-color": "#424953",
+            "window-color": "#e9edf3"
+        },
+        "lagoon": {
+            "text-color": "#e6f6f6",
+            "window-color": "#39a4a1"
+        }
+    },
+    "font": {
+        "h1": [
+            "Courier",
+            20,
+            "bold"
+        ],
+        "h2": [
+            "Courier",
+            16,
+            "bold"
+        ],
+        "h3": [
+            "Courier",
+            14,
+            "bold"
+        ],
+        "h4": [
+            "Courier",
+            12,
+            "bold"
+        ],
+        "p": [
+            "Courier",
+            13,
+            "bold"
+        ]
+    }
+}

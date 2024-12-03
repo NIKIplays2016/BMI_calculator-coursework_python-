@@ -1,7 +1,7 @@
 from tkinter import *
 from customtkinter import CTkButton
 from PIL import Image, ImageTk
-
+import sys
 
 
 class TitleTab:
@@ -114,7 +114,7 @@ class TitleTab:
             width=70,
             height=50,
             text="Выйти",
-            command=exit,
+            command=self.close_app_due_to_inactivity,
             corner_radius=6,
             font=("Courier", 13, "bold")
         )
@@ -135,5 +135,5 @@ class TitleTab:
 
     def close_app_due_to_inactivity(self):
         if self.main_app.check_tittle:  # Проверка, что активен title tab
-            exit()
+            sys.exit()
 
